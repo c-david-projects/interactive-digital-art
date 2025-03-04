@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <title>Multimedia Art Instalation by cliima</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: "Poppins", sans-serif;
+        }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            z-index: 10;
+        }
+        #visualizer {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+        }
+
+        #playBtn { 
+            color:white;
+            background-color: #000;
+            border: 2px dashed white;
+            width: 6em;
+            height: 3em;
+            font-family: "Poppins", sans-serif;
+        }
+                .poppins-thin {
+        font-family: "Poppins", sans-serif;
+        font-weight: 100;
+        font-style: normal;
+        }
+
+        .poppins-extralight {
+        font-family: "Poppins", sans-serif;
+        font-weight: 200;
+        font-style: normal;
+        }
+
+        .poppins-light {
+        font-family: "Poppins", sans-serif;
+        font-weight: 300;
+        font-style: normal;
+        }
+
+        .poppins-regular {
+        font-family: "Poppins", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        }
+
+        .poppins-medium {
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        font-style: normal;
+        }
+
+        .poppins-semibold {
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        }
+
+        .poppins-bold {
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-style: normal;
+        }
+
+        .poppins-extrabold {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-style: normal;
+        }
+
+        .poppins-black {
+        font-family: "Poppins", sans-serif;
+        font-weight: 900;
+        font-style: normal;
+        }
+
+        .poppins-thin-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 100;
+        font-style: italic;
+        }
+
+        .poppins-extralight-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 200;
+        font-style: italic;
+        }
+
+        .poppins-light-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 300;
+        font-style: italic;
+        }
+
+        .poppins-regular-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 400;
+        font-style: italic;
+        }
+
+        .poppins-medium-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        font-style: italic;
+        }
+
+        .poppins-semibold-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: italic;
+        }
+
+        .poppins-bold-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-style: italic;
+        }
+
+        .poppins-extrabold-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-style: italic;
+        }
+
+        .poppins-black-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 900;
+        font-style: italic;
+        }
+
+    
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button id="playBtn">Start</button>
+    </div>
+    <svg id="visualizer" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <script>
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const svg = document.getElementById('visualizer');
+        const playBtn = document.getElementById('playBtn');
+
+        // Grayscale color palette
+        const grayscaleColors = [
+            'rgba(255,255,255,0.7)',   // Bright white
+            'rgba(200,200,200,0.6)',   // Light gray
+            'rgba(150,150,150,0.5)',   // Medium light gray
+            'rgba(100,100,100,0.4)',   // Medium gray
+            'rgba(50,50,50,0.3)'       // Dark gray
+        ];
+
+        let isPlaying = false;
+        let generationInterval;
+
+        // Create pixelated wireframe shape with grayscale colors
+        function createPixelWireframeShape(centerX, centerY) {
+            const shape = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const complexity = Math.random() * 5 + 3; // 3-8 points
+            
+            let pathData = `M${centerX},${centerY}`;
+            
+            // Generate a pixelated, angular path
+            for (let i = 0; i < complexity; i++) {
+                const angle = i * (Math.PI * 2 / complexity) + Math.random() * 0.5;
+                const distance = Math.random() * 250 + 50; // Varied distance
+                
+                // Create more angular, pixel-like movements
+                const stepX = Math.round(Math.cos(angle) * distance / 10) * 10;
+                const stepY = Math.round(Math.sin(angle) * distance / 10) * 10;
+                
+                const endX = centerX + stepX;
+                const endY = centerY + stepY;
+                
+                pathData += ` L${endX},${endY}`;
+            }
+            
+            pathData += ' Z'; // Close the path
+            
+            shape.setAttribute('d', pathData);
+            
+            // Wireframe style with grayscale colors
+            shape.setAttribute('fill', 'none');
+            
+            // Randomly select from grayscale color palette
+            const color = grayscaleColors[Math.floor(Math.random() * grayscaleColors.length)];
+            shape.setAttribute('stroke', color);
+            shape.setAttribute('stroke-width', '2');
+            shape.setAttribute('stroke-dasharray', '5,5');
+            
+            return shape;
+        }
+
+        // Generate exclusively low-frequency tones
+        function createDeepTone() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+
+            // Exclusively low-frequency oscillator types
+            const lowFrequencyTypes = ['sine', 'triangle'];
+            oscillator.type = lowFrequencyTypes[Math.floor(Math.random() * lowFrequencyTypes.length)];
+
+            // Strictly low frequency range (20-200 Hz)
+            const frequency = Math.random() * 180 + 20;
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            
+            // Low-pass filter to further emphasize low frequencies
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(frequency * 1.5, audioContext.currentTime);
+
+            // Soft, slow envelope mimicking deep sound
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(
+                Math.random() * 0.2 + 0.1, 
+                audioContext.currentTime + Math.random() * 1 + 0.5
+            );
+            gainNode.gain.linearRampToValueAtTime(
+                0, 
+                audioContext.currentTime + Math.random() * 2 + 1.5
+            );
+
+            // Connect audio nodes
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            return { oscillator, gainNode };
+        }
+
+        function generateMusicAndVisuals() {
+            // Random number of simultaneous deep tones
+            const toneCount = Math.floor(Math.random() * 2) + 1;
+            
+            for (let i = 0; i < toneCount; i++) {
+                const { oscillator } = createDeepTone();
+                
+                setTimeout(() => {
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + Math.random() * 2 + 1.5);
+
+                    // Create multiple pixel wireframe shapes
+                    const shapeCount = Math.floor(Math.random() * 2) + 1;
+                    for (let j = 0; j < shapeCount; j++) {
+                        const x = Math.random() * window.innerWidth;
+                        const y = Math.random() * window.innerHeight;
+                        
+                        const shape = createPixelWireframeShape(x, y);
+                        
+                        // Pixel-style animation
+                        shape.animate([
+                            { 
+                                transform: `scale(0.2) rotate(0deg)`,
+                                opacity: 0.2
+                            },
+                            { 
+                                transform: `scale(${Math.random() * 1.5 + 0.5}) rotate(${Math.random() * 360}deg)`,
+                                opacity: 0.7
+                            },
+                            { 
+                                transform: `scale(0.2) rotate(0deg)`,
+                                opacity: 0.2
+                            }
+                        ], {
+                            duration: Math.random() * 3000 + 2000,
+                            iterations: 1,
+                            easing: 'ease-in-out'
+                        });
+
+                        svg.appendChild(shape);
+                    }
+
+                    // Manage shape population
+                    if (svg.children.length > 40) {
+                        // Remove multiple older shapes
+                        for (let k = 0; k < 10; k++) {
+                            svg.removeChild(svg.children[0]);
+                        }
+                    }
+                }, i * 200);
+            }
+        }
+
+        function startContinuousGeneration() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            audioContext.resume();
+            playBtn.textContent = 'Stop';
+            playBtn.style.color = 'lightred';
+
+            // Initial generation
+            generateMusicAndVisuals();
+
+            // Continue generating with deep, slow intervals
+            generationInterval = setInterval(() => {
+                generateMusicAndVisuals();
+            }, Math.random() * 1500 + 1000);
+        }
+
+        function stopContinuousGeneration() {
+            if (!isPlaying) return;
+            
+            isPlaying = false;
+            clearInterval(generationInterval);
+            playBtn.textContent = 'Start';
+            playBtn.style.color = '';
+            svg.innerHTML = ''; // Clear all shapes
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                stopContinuousGeneration();
+            } else {
+                startContinuousGeneration();
+            }
+        });
+    </script>
+</body>
+</html>
