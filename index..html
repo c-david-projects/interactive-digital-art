@@ -147,12 +147,29 @@
         font-style: italic;
         }
 
+        .grow-on-hover {
+        display: inline-block;
+        vertical-align: middle;
+        -webkit-transform: perspective(1px) translateZ(0);
+        transform: perspective(1px) translateZ(0);
+        box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+        -webkit-transition-duration: 0.3s;
+        transition-duration: 0.3s;
+        -webkit-transition-property: transform;
+        transition-property: transform;
+        }
+        .grow-on-hover:hover, .grow-on-hover:focus, .grow-on-hover:active {
+        -webkit-transform: scale(1.2);
+        transform: scale(1.2);
+        }
+
+
     
     </style>
 </head>
 <body>
     <div id="controls">
-        <button id="playBtn">Start</button>
+        <button class="grow-on-hover" id="playBtn">Start</button>
     </div>
     <svg id="visualizer" xmlns="http://www.w3.org/2000/svg"></svg>
 
